@@ -11,6 +11,10 @@ public static class PersistenceInMemoryDI
         services.AddScoped<IPlansQuery, InMemoryPlansRepository>();
         services.AddScoped<ICompaniesWriteRepository, InMemoryCompaniesRepository>();
         services.AddScoped<IPlansWriteRepository, InMemoryPlansRepository>();
+
+        var proposalsRepository = new InMemoryProposalsRepository();
+        services.AddSingleton<IProposalsQuery>(proposalsRepository);
+        services.AddSingleton<IProposalsWriteRepository>(proposalsRepository);
         return services;
     }
 }
