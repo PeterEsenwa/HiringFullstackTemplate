@@ -5,4 +5,6 @@ public class Plan
     public required string Id { get; init; }
 
     public required string Name { get; init; }
+    
+    public required decimal Cost { get; init; }
 }

@@ -1,3 +1,4 @@
+using CoverGo.Task.Api.DTOs;
 using CoverGo.Task.Application;
 using CoverGo.Task.Domain;
 using Microsoft.AspNetCore.Mvc;
@@ -8,13 +9,15 @@ namespace CoverGo.Task.Api.Controllers;
 [Route("[controller]")]
 public class ProposalsController : ControllerBase
 {
+    private readonly IPlansQuery _plansQuery;
     private readonly IProposalsQuery _proposalsQuery;
     private readonly IProposalsWriteRepository _proposalsWriteRepository;
 
-    public ProposalsController(IProposalsQuery proposalsQuery, IProposalsWriteRepository proposalsWriteRepository)
+    public ProposalsController(IProposalsQuery proposalsQuery, IProposalsWriteRepository proposalsWriteRepository, IPlansQuery plansQuery)
     {
         _proposalsQuery = proposalsQuery;
         _proposalsWriteRepository = proposalsWriteRepository;
+        _plansQuery = plansQuery;
     }
 
     [HttpGet(Name = "GetProposals")]
@@ -29,14 +32,29 @@ public class ProposalsController : ControllerBase
         return await _proposalsQuery.GetByIdAsync(proposalId);
     }
 
-    // CreateProposal
     [HttpPost(Name = "CreateProposal")]
     public async ValueTask<ActionResult<Proposal>> CreateProposal([FromBody] string clientCompanyName, CancellationToken cancellationToken)
     {
         var proposal = new Proposal(clientCompanyName);
         await _proposalsWriteRepository.AddAsync(proposal, cancellationToken);
 
-        // The route values object should have the same property name as the parameter in the GetOne method
+        return CreatedAtAction(nameof(GetOne), new { proposalId = proposal.Id }, proposal);
+    }
+    
+    [HttpPost("{proposalId}/insured-groups", Name = "AddInsuredGroup")]
+    public async ValueTask<ActionResult<Proposal>> AddInsuredGroup(Guid proposalId, [FromBody] AddInsuredGroupDto dto, CancellationToken cancellationToken)
+    {
+        var proposal = await _proposalsQuery.GetByIdAsync(proposalId, cancellationToken);
+        if (proposal == null)
+        {
+            return NotFound();
+        }
+        
+        var plan = await _plansQuery.ExecuteAsync(dto.PlanId);
+        
+        proposal.AddInsuredGroup(dto.NumberOfEmployees, plan);
+        await _proposalsWriteRepository.UpdateAsync(proposal, cancellationToken);
+
         return CreatedAtAction(nameof(GetOne), new { proposalId = proposal.Id }, proposal);
     }
 }
