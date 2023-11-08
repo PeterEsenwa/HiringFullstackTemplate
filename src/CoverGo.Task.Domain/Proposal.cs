@@ -6,10 +6,13 @@ public class Proposal
     public string CompanyName { get; private set; }
     private List<InsuredGroup> InsuredGroups { get; }
 
-    public Proposal(string companyName)
+    private bool IsDiscounted { get; }
+
+    public Proposal(string companyName, bool isDiscounted = false)
     {
         Id = Guid.NewGuid();
         CompanyName = companyName;
+        IsDiscounted = isDiscounted;
         InsuredGroups = new List<InsuredGroup>();
     }
 
@@ -34,5 +37,6 @@ public class Proposal
         insuredGroup.Update(numberOfEmployees, plan);
     }
     
-    public decimal TotalCost => InsuredGroups.Sum(x => x.Plan.Cost * x.NumberOfEmployees);
+    public decimal TotalCost => InsuredGroups.Sum(x => x.Plan.Cost * (IsDiscounted ? x.NumberOfEmployees - 1 : x.NumberOfEmployees));
+
 }

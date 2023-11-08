@@ -13,7 +13,7 @@ internal class InMemoryProposalsRepository : IProposalsQuery, IProposalsWriteRep
 {
     private readonly ConcurrentDictionary<Guid, Proposal> _proposals = new(new[]
     {
-        new KeyValuePair<Guid, Proposal>(Guid.NewGuid(), new Proposal("CoverGo")),
+        new KeyValuePair<Guid, Proposal>(Guid.NewGuid(), new Proposal("CoverGo", true)),
     });
 
     public ValueTask<Proposal> AddAsync(Proposal proposal, CancellationToken cancellationToken = default)
