@@ -4,7 +4,7 @@ public class Proposal
 {
     public Guid Id { get; private set; }
     public string CompanyName { get; private set; }
-    private List<InsuredGroup> InsuredGroups { get; }
+    public List<InsuredGroup> InsuredGroups { get; }
 
     private bool IsDiscounted { get; }
 

@@ -1,9 +1,4 @@
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using CoverGo.Task.Application;
 using CoverGo.Task.Domain;
 
@@ -11,47 +6,51 @@ namespace CoverGo.Task.Infrastructure.Persistence.InMemory;
 
 internal class InMemoryProposalsRepository : IProposalsQuery, IProposalsWriteRepository
 {
-    private readonly ConcurrentDictionary<Guid, Proposal> _proposals = new(new[]
+    private const string DemoProposalName = "CoverGo";
+    private readonly ConcurrentDictionary<Guid, Proposal> _storedProposals = new(new[]
     {
-        new KeyValuePair<Guid, Proposal>(Guid.NewGuid(), new Proposal("CoverGo", true)),
+        new KeyValuePair<Guid, Proposal>(Guid.NewGuid(), new Proposal(DemoProposalName, true)),
     });
 
-    public ValueTask<Proposal> AddAsync(Proposal proposal, CancellationToken cancellationToken = default)
+    public ValueTask<Proposal> AddAsync(Proposal newProposal, CancellationToken cancellationToken = default)
     {
-        if (_proposals.TryAdd(proposal.Id, proposal))
-        {
-            return ValueTask.FromResult(proposal);
-        }
-        else
+        if (!_storedProposals.TryAdd(newProposal.Id, newProposal))
         {
             throw new InvalidOperationException("Could not add proposal.");
         }
+
+        return ValueTask.FromResult(newProposal);
     }
 
     public ValueTask<List<Proposal>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return ValueTask.FromResult(_proposals.Values.ToList());
+        var allProposals = _storedProposals.Values.ToList();
+        return ValueTask.FromResult(allProposals);
     }
 
     public ValueTask<Proposal?> GetByIdAsync(Guid proposalId, CancellationToken cancellationToken = default)
     {
-        var proposal = _proposals.Values.FirstOrDefault(x => x.Id == proposalId);
-        
-        return ValueTask.FromResult(proposal);
+        var existingProposal = _storedProposals.Values.FirstOrDefault(proposal => proposal.Id == proposalId);
+        return ValueTask.FromResult(existingProposal);
     }
-    
-    public ValueTask<Proposal> UpdateAsync(Proposal proposal, CancellationToken cancellationToken = default)
+
+    public ValueTask<Proposal> UpdateAsync(Proposal updatedProposal, CancellationToken cancellationToken = default)
     {
         try
         {
-            _proposals[proposal.Id] = proposal;
-            
-            return ValueTask.FromResult(proposal);
+            _storedProposals[updatedProposal.Id] = updatedProposal;
         }
-        catch (Exception e)
+        catch (Exception exception)
         {
-            Console.WriteLine(e);
+            LogException(exception);
             throw;
         }
+        
+        return ValueTask.FromResult(updatedProposal);
+    }
+    
+    private static void LogException(Exception exception)
+    {
+        Console.WriteLine(exception);
     }
 }
