@@ -23,13 +23,20 @@ public class ProposalsController : ControllerBase
     [HttpGet(Name = "GetProposals")]
     public async ValueTask<ActionResult<List<Proposal>>> GetAll()
     {
-        return await _proposalsQuery.GetAllAsync();
+        var proposals = await _proposalsQuery.GetAllAsync();
+        return Ok(proposals);
     }
 
     [HttpGet("{proposalId}", Name = "GetProposal")]
     public async ValueTask<ActionResult<Proposal?>> GetOne(Guid proposalId)
     {
-        return await _proposalsQuery.GetByIdAsync(proposalId);
+        var proposal = await _proposalsQuery.GetByIdAsync(proposalId);
+        if (proposal == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(proposal);
     }
 
     [HttpPost(Name = "CreateProposal")]
@@ -47,10 +54,14 @@ public class ProposalsController : ControllerBase
         var proposal = await _proposalsQuery.GetByIdAsync(proposalId, cancellationToken);
         if (proposal == null)
         {
-            return NotFound();
+            return NotFound($"Proposal with ID {proposalId} not found.");
         }
         
         var plan = await _plansQuery.ExecuteAsync(dto.PlanId);
+        if (plan == null)
+        {
+            return NotFound($"Plan with ID {dto.PlanId} not found.");
+        }
         
         proposal.AddInsuredGroup(dto.NumberOfEmployees, plan);
         await _proposalsWriteRepository.UpdateAsync(proposal, cancellationToken);

@@ -21,6 +21,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.MD = README.MD
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoverGo.Task.Api.Tests", "src\CoverGo.Task.Api.Tests\CoverGo.Task.Api.Tests.csproj", "{790D0929-756F-44A0-9483-7BAC7F691101}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,10 @@ Global
 		{62A4E066-BEBE-4202-8A61-3BFE351DF4EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{62A4E066-BEBE-4202-8A61-3BFE351DF4EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{62A4E066-BEBE-4202-8A61-3BFE351DF4EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{790D0929-756F-44A0-9483-7BAC7F691101}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{790D0929-756F-44A0-9483-7BAC7F691101}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{790D0929-756F-44A0-9483-7BAC7F691101}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{790D0929-756F-44A0-9483-7BAC7F691101}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -52,6 +58,7 @@ Global
 		{6EBB34D9-D850-4D78-99C4-D080D014A5F1} = {1C0ED62B-10E0-48B7-A50A-5C4ABDF469F3}
 		{2536166D-E9DD-4738-8B37-246C04017299} = {1C0ED62B-10E0-48B7-A50A-5C4ABDF469F3}
 		{62A4E066-BEBE-4202-8A61-3BFE351DF4EA} = {1C0ED62B-10E0-48B7-A50A-5C4ABDF469F3}
+		{790D0929-756F-44A0-9483-7BAC7F691101} = {1C0ED62B-10E0-48B7-A50A-5C4ABDF469F3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2FBA4290-0474-46C5-8B66-A460842486D1}

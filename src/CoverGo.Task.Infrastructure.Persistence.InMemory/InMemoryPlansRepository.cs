@@ -23,8 +23,8 @@ internal class InMemoryPlansRepository : IPlansQuery, IPlansWriteRepository
         return ValueTask.FromResult(_seedwork.ToList());
     }
 
-    public ValueTask<Plan> ExecuteAsync(string planId)
+    public ValueTask<Plan?> ExecuteAsync(string planId)
     {
-        return ValueTask.FromResult(_seedwork.Single(it => it.Id == planId.ToString()));
+        return ValueTask.FromResult(_seedwork.SingleOrDefault(it => it.Id == planId.ToString()));
     }
 }

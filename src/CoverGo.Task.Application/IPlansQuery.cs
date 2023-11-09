@@ -6,5 +6,5 @@ public interface IPlansQuery
 {
     public ValueTask<List<Plan>> ExecuteAsync();    
     
-    public ValueTask<Plan> ExecuteAsync(string planId);
+    public ValueTask<Plan?> ExecuteAsync(string planId);
 }
