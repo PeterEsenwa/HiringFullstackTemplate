@@ -9,7 +9,7 @@ internal class InMemoryProposalsRepository : IProposalsQuery, IProposalsWriteRep
     private const string DemoProposalName = "CoverGo";
     private readonly ConcurrentDictionary<Guid, Proposal> _storedProposals = new(new[]
     {
-        new KeyValuePair<Guid, Proposal>(Guid.NewGuid(), new Proposal(DemoProposalName, true)),
+        new KeyValuePair<Guid, Proposal>(Guid.NewGuid(), new Proposal(DemoProposalName)),
     });
 
     public ValueTask<Proposal> AddAsync(Proposal newProposal, CancellationToken cancellationToken = default)

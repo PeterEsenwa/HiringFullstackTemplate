@@ -6,7 +6,21 @@ public class ProposalTests
     {
         Id = "1",
         Name = "Plan Name",
-        Cost = 0
+        Cost = 1000
+    };
+    
+    private readonly Plan _samplePlanTwo = new()
+    {
+        Id = "2",
+        Name = "Plan Name Two",
+        Cost = 500
+    };
+
+    private readonly Plan _samplePlanThree = new()
+    {
+        Id = "3",
+        Name = "Plan Name Three",
+        Cost = 5000
     };
 
     [Fact]
@@ -98,7 +112,7 @@ public class ProposalTests
     [Fact]
     public void TotalCost_ReturnsSumOfInsuredGroupsCost()
     {
-        var proposal = new Proposal("Test Company", isDiscounted: false);
+        var proposal = new Proposal("Test Company");
         proposal.AddInsuredGroup(10, _samplePlan);
         proposal.AddInsuredGroup(5, _samplePlan);
         var expectedTotalCost = proposal.InsuredGroups.Sum(ig => ig.Plan.Cost * ig.NumberOfEmployees);
@@ -111,10 +125,49 @@ public class ProposalTests
     [Fact]
     public void TotalCost_AppliesDiscountCorrectly()
     {
-        var proposal = new Proposal("Test Company", isDiscounted: true);
+        var proposal = new Proposal("Test Company");
+
+        var discountedPlans = new Dictionary<string, int>();
+        
+        discountedPlans.Add(_samplePlan.Id, 10);
+        discountedPlans.Add(_samplePlanThree.Id, 5);
+        
+        var discounts = new Discounts(discountedPlans, 1000);
+        
         proposal.AddInsuredGroup(10, _samplePlan);
+        proposal.AddInsuredGroup(5, _samplePlanThree);
+        
+        proposal.AddDiscount(discounts);
+        
         var expectedTotalCost =
-            proposal.InsuredGroups.Sum(ig => ig.Plan.Cost * (ig.NumberOfEmployees - 1)); // Discount applied
+            proposal.InsuredGroups.Sum(ig => (ig.Plan.Cost * ig.NumberOfEmployees) - discounts.Discount); // Discount applied
+
+        var totalCost = proposal.TotalCost;
+
+        Assert.Equal(expectedTotalCost, totalCost);
+    }
+    
+    [Fact]
+    public void TotalCost_NoDiscountApplied()
+    {
+        var proposal = new Proposal("Test Company");
+        
+        var discountedPlans = new Dictionary<string, int>();
+
+        var numberOfEmployeesPlanOne = 10;
+        discountedPlans.Add(_samplePlan.Id, numberOfEmployeesPlanOne);
+        var numberOfEmployeesPlanThree = 5;
+        discountedPlans.Add(_samplePlanThree.Id, numberOfEmployeesPlanThree);
+        
+        var discounts = new Discounts(discountedPlans, 1000);
+        
+        proposal.AddDiscount(discounts);
+
+        proposal.AddInsuredGroup(numberOfEmployeesPlanOne, _samplePlan);
+        proposal.AddInsuredGroup(numberOfEmployeesPlanThree - 1, _samplePlanThree);
+        
+        var expectedTotalCost =
+            proposal.InsuredGroups.Sum(ig => (ig.Plan.Cost * ig.NumberOfEmployees)); // No discount applied
 
         var totalCost = proposal.TotalCost;
 
